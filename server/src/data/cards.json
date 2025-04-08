@@ -1,0 +1,27 @@
+{
+    "cards": [
+      {
+        "id": "001",
+        "name": "甲殻騎士",
+        "type": "虫",
+        "attribute": "赤",
+        "cost": 3,
+        "techniques": [
+          {
+            "name": "突撃",
+            "attack": 5,
+            "effect": "攻撃時に+1ダメージを与える"
+          },
+          {
+            "name": "防御強化",
+            "attack": 3,
+            "effect": "このターン、防御+2"
+          }
+        ],
+        "flavor_text": "堅牢な甲殻を持つ騎士のような昆虫。",
+        "rarity": "R",
+        "set": "第1弾",
+        "image": "images/cards/001.png"
+      }
+    ]
+  }
