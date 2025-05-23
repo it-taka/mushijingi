@@ -44,7 +44,15 @@ export const Card: React.FC<CardProps> = ({
     if (card.type !== CardTypeEnum.BUG || !card.hitpoints) {
       return 0;
     }
-    return Math.max(0, card.hitpoints - damage);
+    const current = Math.max(0, card.hitpoints - damage);
+    
+    // デバッグ情報をコンソールに出力
+    console.log(`HP計算 - ${card.name}:`);
+    console.log(`- 最大HP: ${card.hitpoints}`);
+    console.log(`- 受けたダメージ: ${damage}`);
+    console.log(`- 現在HP: ${current}`);
+    
+    return current;
   };
 
   // 最大ヒットポイントを取得
@@ -58,6 +66,9 @@ export const Card: React.FC<CardProps> = ({
     
     const current = getCurrentHitpoints();
     const max = getMaxHitpoints();
+    
+    if (max === 0) return '#333';
+    
     const ratio = current / max;
     
     if (ratio > 0.7) return '#4CAF50'; // 緑（健康）
@@ -205,6 +216,11 @@ export const Card: React.FC<CardProps> = ({
     return (
       <div className="card-hp-badge" style={{ backgroundColor: color }}>
         {current}/{max}
+        {damage > 0 && (
+          <div className="damage-indicator" style={{ fontSize: '8px', color: '#ff4444' }}>
+            -{damage}
+          </div>
+        )}
       </div>
     );
   };

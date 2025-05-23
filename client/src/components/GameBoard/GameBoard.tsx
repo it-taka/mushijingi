@@ -35,7 +35,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
   const [showHandDetails, setShowHandDetails] = useState<boolean>(false);
   const [selectedHandCard, setSelectedHandCard] = useState<CardType | null>(null);
   const [selectedTarget, setSelectedTarget] = useState<CardType | null>(null);
-  const [selectedTechniqueIndex, setSelectedTechniqueIndex] = useState<number>(0); // 技選択用
+  const [selectedTechniqueIndex, setSelectedTechniqueIndex] = useState<number>(0);
   const [actionMode, setActionMode] = useState<'none' | 'play' | 'food' | 'attack' | 'technique_select'>('none');
 
   // プレイヤーの視点を取得
@@ -43,6 +43,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
 
   // 手札のカードをクリック時の処理
   const handleHandCardClick = (card: CardType) => {
+    // 攻撃モード中は手札カードを選択不可
+    if (attackingCard) {
+      return;
+    }
+
     // すでに選択中のカードをもう一度クリックした場合は選択解除
     if (selectedHandCard && selectedHandCard.id === card.id) {
       setSelectedHandCard(null);
@@ -71,13 +76,18 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
     if (!gameState) return;
 
     if (!isOpponent) {
-      // 自分のフィールドカードを選択
+      // 自分のフィールドカードを選択（攻撃用）
       const myFieldCard = me?.field.find(fc => fc.card.id === card.id);
       
       if (myFieldCard && canAttack(gameState, playerId, myFieldCard)) {
+        // 手札選択をクリア
+        setSelectedHandCard(null);
+        setActionMode('none');
+        
+        // 攻撃カード選択
         setAttackingCard(myFieldCard);
         setSelectedTarget(null);
-        setSelectedTechniqueIndex(0); // デフォルトで最初の技を選択
+        setSelectedTechniqueIndex(0);
         
         // 技が複数ある場合は技選択モードに
         if (myFieldCard.card.techniques && myFieldCard.card.techniques.length > 1) {
@@ -87,17 +97,25 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
         }
       }
     } else if (attackingCard) {
-      // 攻撃先として相手のカードを選択
-      setSelectedTarget(card);
-      // 技選択済みなら攻撃モードに移行
-      if (actionMode === 'technique_select') {
-        setActionMode('attack');
+      // 相手のカードを攻撃対象として選択
+      const opponentFieldCard = opponent?.field.find(fc => fc.card.id === card.id);
+      
+      if (opponentFieldCard) {
+        setSelectedTarget(card);
+        setSelectedCard(card);
+        
+        // 技選択済みなら攻撃モードに移行
+        if (actionMode === 'technique_select') {
+          setActionMode('attack');
+        } else if (actionMode === 'attack') {
+          // すでに攻撃モードの場合は状態を維持
+        }
       }
     }
   };
 
   // カードをクリック時の処理（PlayerAreaから呼び出される）
-  const handleCardClick = (card: CardType, location: 'hand' | 'field', isOpponent: boolean = false) => {
+  const handleCardClick = (card: CardType, location: 'hand' | 'field', isOpponent: boolean) => {
     if (location === 'hand') {
       handleHandCardClick(card);
     } else if (location === 'field') {
@@ -108,7 +126,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
   // 技を選択する処理
   const handleTechniqueSelect = (techniqueIndex: number) => {
     setSelectedTechniqueIndex(techniqueIndex);
-    setActionMode('attack'); // 技選択後は攻撃モードに移行
+    setActionMode('attack');
   };
 
   // カードをプレイするボタンのハンドラ
@@ -146,6 +164,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
       setSelectedTarget(null);
       setSelectedTechniqueIndex(0);
       setActionMode('none');
+      setSelectedCard(null);
     }
   };
 
@@ -159,6 +178,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
         setAttackingCard(null);
         setSelectedTechniqueIndex(0);
         setActionMode('none');
+        setSelectedCard(null);
       }
     }
   };
@@ -172,6 +192,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
       setSelectedTarget(null);
       setSelectedTechniqueIndex(0);
       setActionMode('none');
+      setSelectedCard(null);
     }
   };
 
@@ -182,6 +203,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
     setSelectedTarget(null);
     setSelectedTechniqueIndex(0);
     setActionMode('none');
+    setSelectedCard(null);
   };
 
   // 手札の詳細表示切り替え
@@ -193,13 +215,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
   const renderGameInfo = () => {
     if (!gameState) return null;
 
-    // 先攻1ターン目かどうかを判定
     const isFirstPlayerFirstTurn = 
       gameState.turn === 1 && 
       gameState.currentPlayerIndex === 0 && 
       isMyTurn(gameState, playerId);
 
-    // フェーズの表示名
     let phaseName;
     switch (gameState.phase) {
       case GamePhase.DRAW:
@@ -317,6 +337,14 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
         
         return (
           <div className="action-buttons attack-mode">
+            <div className="attack-info">
+              <strong>攻撃モード</strong>
+              <p>攻撃先を選んでください</p>
+              {attackingCard && (
+                <p>攻撃カード: {attackingCard.card.name}</p>
+              )}
+            </div>
+            
             {selectedTarget && (
               <button 
                 className="attack-btn" 
@@ -346,7 +374,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
               </button>
             )}
             
-            {/* 技が複数ある場合は技変更ボタンを表示 */}
             {attackingCard?.card.techniques && attackingCard.card.techniques.length > 1 && (
               <button 
                 className="change-technique-btn" 
@@ -365,7 +392,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
       default:
         return (
           <div className="action-buttons">
-            {/* セットフェーズでのスキップボタン */}
             {canSkipSetPhase(gameState, playerId) && (
               <button className="skip-set-btn" onClick={handleSkipSetPhaseAction}>
                 セットフェーズをスキップ
@@ -404,7 +430,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
             const selectedTechnique = attackingCard?.card.techniques?.[selectedTechniqueIndex];
             actionPrompt = `「${attackingCard?.card.name}」の「${selectedTechnique?.name}」で「${selectedTarget.name}」を攻撃しますか？`;
           } else {
-            actionPrompt = "攻撃先を選んでください";
+            actionPrompt = "攻撃先を選んでください（相手のカードをクリック）";
           }
           break;
         default:
@@ -430,7 +456,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
     );
   };
 
-  // ゲームが存在しない場合
   if (!gameState) {
     return <div className="loading">ゲームを読み込み中...</div>;
   }
@@ -439,7 +464,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
     <div className="game-board">
       {renderGameInfo()}
       
-      {/* 相手エリア */}
       <div className="opponent-area">
         {opponent && (
           <PlayerArea
@@ -453,12 +477,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
         )}
       </div>
       
-      {/* センターエリア（フィールド） */}
       <div className="center-area">
         {renderActionInfo()}
       </div>
       
-      {/* 自分エリア */}
       <div className="player-area">
         {me && (
           <PlayerArea

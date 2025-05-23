@@ -60,7 +60,9 @@ export class Game {
     this.currentPlayerIndex = Math.floor(Math.random() * 2);
     
     this.started = true;
-    this.phase = GamePhase.SET;
+    this.phase = GamePhase.SET; // 先攻1ターン目はドローフェーズをスキップ
+    
+    console.log(`ゲーム開始: 先攻プレイヤー ${this.getCurrentPlayer().username}`);
     return true;
   }
 
@@ -82,29 +84,47 @@ export class Game {
    * 次のフェイズに進む
    */
   nextPhase(): void {
+    console.log(`フェイズ移行: ${this.phase} から`);
+    
     switch (this.phase) {
       case GamePhase.DRAW:
         this.phase = GamePhase.SET;
         break;
       case GamePhase.SET:
         this.phase = GamePhase.MAIN;
-        // メインフェイズの開始時にコストを更新
+        // メインフェーズの開始時にコストを更新
         this.getCurrentPlayer().updateFood();
+        console.log(`${this.getCurrentPlayer().username} のエサ更新: ${this.getCurrentPlayer().currentFood}`);
         break;
       case GamePhase.MAIN:
         this.phase = GamePhase.END;
-        // ターン終了処理
-        this.getCurrentPlayer().endTurn();
         break;
       case GamePhase.END:
+        // ★重要: 全プレイヤーのカードダメージをリセット（ルールに従い）
+        console.log(`全プレイヤーのダメージリセット処理`);
+        this.players.forEach((player, index) => {
+          console.log(`プレイヤー ${index + 1}: ${player.username} のダメージリセット`);
+          player.resetDamageOnly(); // 新しいメソッドを使用
+        });
+        
+        // 現在のプレイヤーの攻撃フラグのみリセット
+        console.log(`現在のプレイヤー ${this.getCurrentPlayer().username} の攻撃フラグリセット`);
+        this.getCurrentPlayer().resetAttackFlags();
+        
         // 次のプレイヤーのターンへ
         this.currentPlayerIndex = (this.currentPlayerIndex + 1) % 2;
         this.phase = GamePhase.DRAW;
+        
+        // ターン数を増加（両方のプレイヤーが1回ずつプレイしたら+1）
         if (this.currentPlayerIndex === 0) {
           this.turn++;
         }
+        
+        console.log(`ターン移行: プレイヤー ${this.getCurrentPlayer().username} のターン ${this.turn}`);
         break;
     }
+    
+    console.log(`フェイズ移行完了: ${this.phase}`);
   }
 
   /**
@@ -122,6 +142,8 @@ export class Game {
       return { success: false, error: ErrorType.NOT_YOUR_TURN };
     }
 
+    console.log(`アクション処理: ${action.type} by ${currentPlayer.username}`);
+
     // アクションの種類に応じて処理
     switch (action.type) {
       case ActionType.PLAY_CARD:
@@ -132,6 +154,9 @@ export class Game {
       
       case ActionType.SET_FOOD:
         return this.handleSetFood(action, currentPlayer);
+      
+      case ActionType.SKIP_SET_PHASE:
+        return this.handleSkipSetPhase(action, currentPlayer);
       
       case ActionType.USE_TECHNIQUE:
         return this.handleUseTechnique(action, currentPlayer);
@@ -168,6 +193,7 @@ export class Game {
       return { success: false, error: ErrorType.INSUFFICIENT_FOOD };
     }
 
+    console.log(`カードプレイ: ${playedCard.name} (コスト: ${playedCard.cost})`);
     this.lastAction = action;
     return { success: true };
   }
@@ -196,11 +222,20 @@ export class Game {
       return { success: false, error: ErrorType.INVALID_ACTION };
     }
 
+    console.log(`攻撃処理開始:`);
+    console.log(`- 攻撃者: ${attackerCard.card.name}`);
+    console.log(`- 使用技: ${attackerCard.card.techniques[techniqueIndex].name}`);
+    console.log(`- 技インデックス: ${techniqueIndex}`);
+    console.log(`- 攻撃済みフラグ: ${attackerCard.hasAttacked}`);
+
     // 攻撃を実行
     const attackPower = player.attack(attackerIndex, techniqueIndex);
     if (attackPower <= 0) {
+      console.log(`- エラー: 攻撃力が0以下 (${attackPower})`);
       return { success: false, error: ErrorType.INVALID_ACTION };
     }
+
+    console.log(`- 攻撃力: ${attackPower}`);
 
     const opponent = this.getOpponentPlayer();
 
@@ -209,11 +244,17 @@ export class Game {
       // 相手フィールド上の虫を攻撃
       const defenderIndex = opponent.field.findIndex(fieldCard => fieldCard.card.id === action.targetId);
       if (defenderIndex === -1) {
+        console.log(`- エラー: 攻撃対象が見つからない (${action.targetId})`);
         return { success: false, error: ErrorType.INVALID_TARGET };
       }
 
+      const defender = opponent.field[defenderIndex];
+      console.log(`- 防御者: ${defender.card.name}`);
+      console.log(`- 防御者現在HP: ${(defender.card.hitpoints || 0) - defender.damage}/${defender.card.hitpoints}`);
+
       // ダメージを適用
       const destroyed = opponent.receiveDamage(defenderIndex, attackPower);
+      console.log(`- 攻撃結果: ${destroyed ? '破壊' : '生存'}`);
 
       this.lastAction = {
         ...action,
@@ -225,14 +266,19 @@ export class Game {
     } else {
       // 相手本体への直接攻撃（相手フィールドに虫がいない場合のみ可能）
       if (opponent.field.length > 0) {
+        console.log(`- エラー: 相手フィールドに虫がいるため直接攻撃不可`);
         return { success: false, error: ErrorType.INVALID_TARGET };
       }
+
+      console.log(`- 相手本体への直接攻撃`);
 
       // 縄張りがあるならダメージを適用
       if (opponent.territory.length > 0) {
         opponent.territory.pop();
+        console.log(`- 縄張りを1枚破壊。残り: ${opponent.territory.length}枚`);
       } else {
         // 縄張りがなく、相手本体に攻撃できた場合はゲーム終了
+        console.log(`- 勝利条件達成`);
         this.winner = player;
         this.ended = true;
       }
@@ -268,6 +314,22 @@ export class Game {
       return { success: false, error: ErrorType.INVALID_ACTION };
     }
 
+    console.log(`エサセット: ${setCard.name}`);
+    this.lastAction = action;
+    this.nextPhase(); // セットフェーズからメインフェーズへ
+    return { success: true };
+  }
+
+  /**
+   * セットフェーズをスキップする処理
+   */
+  private handleSkipSetPhase(action: Action, player: PlayerModel): { success: boolean; error?: ErrorType } {
+    // セットフェーズ以外はスキップできない
+    if (this.phase !== GamePhase.SET) {
+      return { success: false, error: ErrorType.INVALID_ACTION };
+    }
+
+    console.log(`セットフェーズスキップ`);
     this.lastAction = action;
     this.nextPhase(); // セットフェーズからメインフェーズへ
     return { success: true };
@@ -292,25 +354,47 @@ export class Game {
    * ターン終了処理
    */
   private handleEndTurn(): { success: boolean; error?: ErrorType } {
+    console.log(`ターン終了アクション処理開始`);
+    
     // 現在のフェーズをターン終了に
     this.phase = GamePhase.END;
     
-    // 次のフェイズ（次のプレイヤーのドローフェーズ）へ
+    // ★重要: 全プレイヤーのカードダメージをリセット（ルールに従い）
+    console.log(`全プレイヤーのダメージリセット処理`);
+    this.players.forEach((player, index) => {
+      console.log(`プレイヤー ${index + 1}: ${player.username} のダメージリセット`);
+      player.resetDamageOnly(); // 新しいメソッドを使用
+    });
+    
+    // 現在のプレイヤーの攻撃フラグのみリセット
+    console.log(`現在のプレイヤー ${this.getCurrentPlayer().username} の攻撃フラグリセット`);
+    this.getCurrentPlayer().resetAttackFlags();
+    
+    // 次のフェーズ（次のプレイヤーのドローフェーズ）へ
     this.nextPhase();
     
     // 次のプレイヤーがドローする（先攻1ターン目以外）
     if (!(this.turn === 1 && this.currentPlayerIndex === 0)) {
       const currentPlayer = this.getCurrentPlayer();
+      console.log(`${currentPlayer.username} がドロー`);
       const drawnCard = currentPlayer.drawCard();
       
       // ドローできなかった場合（山札切れ）は勝敗判定
       if (!drawnCard) {
+        console.log(`山札切れによる勝敗判定`);
         this.checkDeckOutWinner();
+        return { success: true };
+      } else {
+        console.log(`ドローしたカード: ${drawnCard.name}`);
       }
-
+    } else {
+      console.log(`先攻1ターン目のためドローなし`);
     }
+    
+    // セットフェーズへ移行
     this.nextPhase();
     
+    console.log(`ターン終了処理完了: 現在は ${this.getCurrentPlayer().username} の ${this.phase}`);
     return { success: true };
   }
 
@@ -321,6 +405,7 @@ export class Game {
     // 相手を勝者に設定
     this.winner = this.getOpponentPlayer();
     this.ended = true;
+    console.log(`${player.username} が降伏。${this.winner.username} の勝利`);
     return { success: true };
   }
 
@@ -330,6 +415,8 @@ export class Game {
   private checkDeckOutWinner(): void {
     const player1Territory = this.players[0].territory.length;
     const player2Territory = this.players[1].territory.length;
+    
+    console.log(`勝敗判定: ${this.players[0].username}(${player1Territory}) vs ${this.players[1].username}(${player2Territory})`);
     
     if (player1Territory > player2Territory) {
       this.winner = this.players[0];

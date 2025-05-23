@@ -324,3 +324,134 @@
     min-width: 120px;
   }
 }
+
+
+.attack-mode {
+  background-color: rgba(255, 0, 0, 0.2);
+  border: 2px solid rgba(255, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 10px 0;
+  text-align: center;
+}
+
+.attack-info {
+  margin-bottom: 15px;
+  color: #ffffff;
+}
+
+.attack-info strong {
+  color: #ff6b6b;
+  font-size: 18px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.attack-info p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #cccccc;
+}
+
+/* 攻撃対象選択時のカード強調表示 */
+.field-area .card.attack-target-available {
+  border: 2px solid #ff6b6b;
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.field-area .card.attack-target-available:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+}
+
+.field-area .card.attack-target-selected {
+  border: 3px solid #ff4444;
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.8);
+  transform: translateY(-8px);
+}
+
+/* 攻撃側カードの強調表示 */
+.field-area .card.attacking-card {
+  border: 3px solid #ffaa00;
+  box-shadow: 0 0 15px rgba(255, 170, 0, 0.8);
+  transform: translateY(-8px);
+}
+
+/* 攻撃ボタンのスタイル改善 */
+.attack-btn {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 5px;
+  min-width: 150px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.attack-btn:hover {
+  background: linear-gradient(135deg, #c0392b, #a93226);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.attack-btn:disabled {
+  background: #7f8c8d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.direct-attack-btn {
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 5px;
+  min-width: 150px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.direct-attack-btn:hover {
+  background: linear-gradient(135deg, #d35400, #ba4a00);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.selected-technique {
+  font-size: 11px;
+  color: #ffd700;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+/* モバイル対応の改善 */
+@media (max-width: 768px) {
+  .attack-mode {
+    padding: 15px;
+    margin: 5px 0;
+  }
+  
+  .attack-info strong {
+    font-size: 16px;
+  }
+  
+  .attack-info p {
+    font-size: 13px;
+  }
+  
+  .attack-btn, .direct-attack-btn {
+    padding: 10px 16px;
+    font-size: 14px;
+    min-width: 120px;
+  }
+}

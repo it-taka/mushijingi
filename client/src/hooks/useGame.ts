@@ -114,7 +114,7 @@ export const useGame = () => {
   const canEndTurn = useCallback((gameState: GameState | null, playerId: string): boolean => {
     if (!gameState || !isMyTurn(gameState, playerId)) return false;
     
-    // どのフェイズでもターン終了可能（セットフェーズはスキップできる）
+    // どのフェーズでもターン終了可能（セットフェーズはスキップできる）
     return true;
   }, [isMyTurn]);
 
@@ -163,9 +163,6 @@ export const useGame = () => {
         techniqueIndex < 0) {
       return false;
     }
-
-    // 追加の技固有の制約をここで実装可能
-    // 例：「一度だけ使用できる」技の制御など
 
     return true;
   }, [canAttack]);

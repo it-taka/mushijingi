@@ -158,6 +158,7 @@ export class PlayerModel implements Player {
    */
   attack(fieldIndex: number, techniqueIndex: number = 0): number {
     if (fieldIndex < 0 || fieldIndex >= this.field.length) {
+      console.log(`攻撃エラー: 無効なフィールドインデックス ${fieldIndex}`);
       return 0;
     }
 
@@ -165,19 +166,21 @@ export class PlayerModel implements Player {
     
     // すでに攻撃済みの場合
     if (fieldCard.hasAttacked) {
+      console.log(`攻撃エラー: ${fieldCard.card.name} は既に攻撃済み`);
       return 0;
     }
 
-    const cardModel = new CardModel(fieldCard.card);
-    
     // 技のインデックスが有効かチェック
     if (!fieldCard.card.techniques || techniqueIndex >= fieldCard.card.techniques.length || techniqueIndex < 0) {
+      console.log(`攻撃エラー: 無効な技インデックス ${techniqueIndex} (${fieldCard.card.name})`);
       return 0;
     }
 
     // 指定された技の攻撃力を取得
     const selectedTechnique = fieldCard.card.techniques[techniqueIndex];
     const attack = selectedTechnique.attack || 0;
+    
+    console.log(`攻撃実行: ${fieldCard.card.name} の ${selectedTechnique.name} (攻撃力: ${attack})`);
     
     // 攻撃済みとマーク
     fieldCard.hasAttacked = true;
@@ -193,15 +196,25 @@ export class PlayerModel implements Player {
    */
   receiveDamage(fieldIndex: number, damage: number): boolean {
     if (fieldIndex < 0 || fieldIndex >= this.field.length) {
+      console.log(`ダメージ処理エラー: 無効なフィールドインデックス ${fieldIndex}`);
       return false;
     }
 
     const fieldCard = this.field[fieldIndex];
+    const oldDamage = fieldCard.damage;
     fieldCard.damage += damage;
 
-    // ダメージが攻撃力以上なら破壊
-    const cardModel = new CardModel(fieldCard.card);
-    if (fieldCard.damage >= cardModel.getAttack()) {
+    console.log(`ダメージ処理: ${fieldCard.card.name}`);
+    console.log(`- 受けたダメージ: ${damage}`);
+    console.log(`- 前回までのダメージ: ${oldDamage}`);
+    console.log(`- 累積ダメージ: ${fieldCard.damage}`);
+    console.log(`- 最大HP: ${fieldCard.card.hitpoints || 0}`);
+
+    // 累積ダメージがヒットポイント以上なら破壊（修正：hitpointsと比較）
+    const maxHp = fieldCard.card.hitpoints || 0;
+    if (fieldCard.damage >= maxHp) {
+      console.log(`- 結果: 破壊される (${fieldCard.damage} >= ${maxHp})`);
+      
       // 虫カードと装備カードを捨て札に移動
       this.graveyard.push(fieldCard.card);
       this.graveyard.push(...fieldCard.enhancements);
@@ -212,23 +225,58 @@ export class PlayerModel implements Player {
       return true;
     }
     
+    console.log(`- 結果: 生存 (${fieldCard.damage} < ${maxHp})`);
     return false;
   }
 
   /**
-   * ターン終了時の処理
+   * ターン終了時の処理（旧メソッド - 互換性のため残す）
    */
   endTurn(): void {
-    console.log(`ターン終了処理: プレイヤー ${this.username} のフィールドカードをリセット`);
+    console.log(`ターン終了処理開始: プレイヤー ${this.username}`);
     
     // すべての虫カードの攻撃フラグとダメージをリセット
     this.field.forEach((fieldCard, index) => {
-      console.log(`カード ${index}: ${fieldCard.card.name} - 攻撃済み: ${fieldCard.hasAttacked} -> false, ダメージ: ${fieldCard.damage} -> 0`);
+      console.log(`カード ${index}: ${fieldCard.card.name}`);
+      console.log(`  - 攻撃済み: ${fieldCard.hasAttacked} -> false`);
+      console.log(`  - ダメージ: ${fieldCard.damage} -> 0 (HP: ${fieldCard.card.hitpoints})`);
+      
+      // 攻撃フラグをリセット（次のターンで攻撃可能に）
       fieldCard.hasAttacked = false;
+      
+      // ダメージをリセット（蟲神器のルールではターン終了時にダメージ回復）
       fieldCard.damage = 0;
     });
     
-    console.log(`ターン終了処理完了: プレイヤー ${this.username}`);
+    console.log(`ターン終了処理完了: プレイヤー ${this.username} のフィールドカード ${this.field.length}枚をリセット`);
+  }
+
+  /**
+   * 全カードのダメージのみをリセット（全プレイヤー対象）
+   */
+  resetDamageOnly(): void {
+    console.log(`ダメージリセット: プレイヤー ${this.username}`);
+    
+    this.field.forEach((fieldCard, index) => {
+      if (fieldCard.damage > 0) {
+        console.log(`  カード ${index}: ${fieldCard.card.name} - ダメージ: ${fieldCard.damage} -> 0`);
+        fieldCard.damage = 0;
+      }
+    });
+  }
+
+  /**
+   * 攻撃フラグのみをリセット（現在のプレイヤーのみ）
+   */
+  resetAttackFlags(): void {
+    console.log(`攻撃フラグリセット: プレイヤー ${this.username}`);
+    
+    this.field.forEach((fieldCard, index) => {
+      if (fieldCard.hasAttacked) {
+        console.log(`  カード ${index}: ${fieldCard.card.name} - 攻撃済み: true -> false`);
+        fieldCard.hasAttacked = false;
+      }
+    });
   }
 
   /**

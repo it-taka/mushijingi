@@ -27,9 +27,42 @@
   color: #3498db;
 }
 
-.deck-info {
-  font-size: 14px;
+/* プレイヤー統計表示の改善 */
+.player-stats {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.deck-info, .hand-info, .territory-info {
+  font-size: 13px;
   color: #bdc3c7;
+  padding: 2px 6px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.hand-info {
+  border-color: rgba(52, 152, 219, 0.3);
+  background-color: rgba(52, 152, 219, 0.1);
+  color: #5dade2;
+}
+
+.territory-info {
+  border-color: rgba(46, 204, 113, 0.3);
+  background-color: rgba(46, 204, 113, 0.1);
+  color: #58d68d;
+}
+
+.territory-info.danger {
+  border-color: rgba(231, 76, 60, 0.5);
+  background-color: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+  font-weight: bold;
+  animation: pulse 2s infinite;
 }
 
 .game-areas {
@@ -56,6 +89,7 @@
   background-color: rgba(0, 0, 0, 0.3);
   border-radius: 5px;
   padding: 10px;
+  transition: all 0.3s ease;
 }
 
 .area-title {
@@ -96,7 +130,7 @@
 }
 
 .hand-card-wrapper:hover {
-  transform: scale(0.8); /* ホバー時は少し大きく */
+  transform: scale(0.95); /* ホバー時は少し大きく */
   z-index: 10;
   position: relative;
 }
@@ -117,6 +151,7 @@
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   position: relative;
+  transition: all 0.3s ease;
 }
 
 /* 手札用の裏面カード */
@@ -206,6 +241,7 @@
   color: #e74c3c;
   font-weight: bold;
   border-color: #e74c3c;
+  animation: pulse 2s infinite;
 }
 
 /* フィールドエリアの強調 */
@@ -230,6 +266,103 @@
   font-size: 14px;
 }
 
+/* カード破壊時のアニメーション効果 */
+.card-destroyed-animation {
+  animation: cardDestroyed 0.5s ease-in-out;
+}
+
+@keyframes cardDestroyed {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1) rotate(5deg);
+    opacity: 0.8;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+/* 縄張りから手札への移動アニメーション */
+.territory-to-hand-animation {
+  animation: territoryToHand 1s ease-in-out;
+}
+
+@keyframes territoryToHand {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-20px);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 統計情報のホバー効果 */
+.deck-info:hover, .hand-info:hover, .territory-info:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 縄張りエリアの特別スタイル */
+.territory-area {
+  border: 2px solid rgba(46, 204, 113, 0.3);
+  background-color: rgba(46, 204, 113, 0.1);
+}
+
+.territory-area.danger {
+  border-color: rgba(231, 76, 60, 0.5);
+  background-color: rgba(231, 76, 60, 0.2);
+  animation: pulse 2s infinite;
+}
+
+.territory-area .area-title {
+  color: #2ecc71;
+}
+
+.territory-area.danger .area-title {
+  color: #e74c3c;
+}
+
+/* エサ場の特別スタイル */
+.food-area {
+  border: 1px solid rgba(243, 156, 18, 0.3);
+  background-color: rgba(243, 156, 18, 0.1);
+}
+
+.food-area .area-title {
+  color: #f39c12;
+}
+
+/* 捨て札エリアの特別スタイル */
+.graveyard-area {
+  border: 1px solid rgba(127, 140, 141, 0.3);
+  background-color: rgba(127, 140, 141, 0.1);
+}
+
+.graveyard-area .area-title {
+  color: #95a5a6;
+}
+
+/* パルスアニメーション */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
 /* モバイル対応 */
 @media (max-width: 768px) {
   .game-areas {
@@ -240,6 +373,17 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 5px;
+  }
+  
+  .player-stats {
+    gap: 8px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .deck-info, .hand-info, .territory-info {
+    font-size: 11px;
+    padding: 1px 4px;
   }
   
   .hand-area, .field-area, .food-area, .territory-area, .graveyard-area {
@@ -274,5 +418,41 @@
   
   .field-cards-container {
     min-height: 100px; /* モバイルではフィールドの高さを小さく */
+  }
+}
+
+/* タブレット対応 */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .player-stats {
+    gap: 10px;
+  }
+  
+  .deck-info, .hand-info, .territory-info {
+    font-size: 12px;
+  }
+  
+  .hand-card-wrapper {
+    transform: scale(0.8);
+  }
+  
+  .hand-card-wrapper:hover {
+    transform: scale(0.85);
+  }
+}
+
+/* 高解像度ディスプレイ対応 */
+@media (min-width: 1440px) {
+  .player-area-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .player-stats {
+    gap: 20px;
+  }
+  
+  .deck-info, .hand-info, .territory-info {
+    font-size: 14px;
+    padding: 3px 8px;
   }
 }

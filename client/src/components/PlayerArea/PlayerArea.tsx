@@ -8,7 +8,7 @@ interface PlayerAreaProps {
   isOpponent: boolean;
   selectedCard: CardType | null;
   attackingCard: FieldCard | null;
-  onCardClick: (card: CardType, location: 'hand' | 'field') => void;
+  onCardClick: (card: CardType, location: 'hand' | 'field', isOpponent: boolean) => void;
   showHandDetails: boolean;
 }
 
@@ -49,7 +49,7 @@ export const PlayerArea: React.FC<PlayerAreaProps> = ({
                 card={card}
                 isSelected={selectedCard?.id === card.id}
                 isPlayable={true}
-                onClick={() => onCardClick(card, 'hand')}
+                onClick={() => onCardClick(card, 'hand', false)}
                 showDetails={showHandDetails}
               />
             </div>
@@ -65,19 +65,25 @@ export const PlayerArea: React.FC<PlayerAreaProps> = ({
       <div className="field-area">
         <div className="area-title">場 ({player.field.length}枚)</div>
         <div className="cards-container field-cards-container">
-          {player.field.map((fieldCard) => (
-            <Card
-              key={`field-${fieldCard.card.id}`}
-              card={fieldCard.card}
-              isSelected={selectedCard?.id === fieldCard.card.id || 
-                          (attackingCard && fieldCard.card.id === attackingCard.card.id)}
-              isPlayable={!isOpponent || (isOpponent && attackingCard !== null)}
-              hasAttacked={fieldCard.hasAttacked}
-              damage={fieldCard.damage} // ダメージ情報を渡す
-              onClick={() => onCardClick(fieldCard.card, 'field')}
-              showDetails={!isOpponent && showHandDetails}
-            />
-          ))}
+          {player.field.map((fieldCard) => {
+            // 攻撃対象として選択可能かどうかを判定
+            const isAttackTarget = isOpponent && attackingCard !== null;
+            const isSelectedTarget = selectedCard?.id === fieldCard.card.id && isAttackTarget;
+            const isAttackingCard = !isOpponent && attackingCard && fieldCard.card.id === attackingCard.card.id;
+            
+            return (
+              <Card
+                key={`field-${fieldCard.card.id}`}
+                card={fieldCard.card}
+                isSelected={isSelectedTarget || isAttackingCard}
+                isPlayable={isAttackTarget || (!isOpponent && !attackingCard)}
+                hasAttacked={fieldCard.hasAttacked}
+                damage={fieldCard.damage}
+                onClick={() => onCardClick(fieldCard.card, 'field', isOpponent)}
+                showDetails={!isOpponent && showHandDetails}
+              />
+            );
+          })}
           {player.field.length === 0 && (
             <div className="empty-area">空</div>
           )}
@@ -152,8 +158,10 @@ export const PlayerArea: React.FC<PlayerAreaProps> = ({
         <div className="player-name">
           {player.username} {isOpponent ? '(相手)' : '(あなた)'}
         </div>
-        <div className="deck-info">
-          山札: {player.deck.length}枚
+        <div className="player-stats">
+          <div className="deck-info">山札: {player.deck.length}枚</div>
+          <div className="hand-info">手札: {player.hand.length}枚</div>
+          <div className="territory-info">縄張り: {player.territory.length}枚</div>
         </div>
       </div>
     );
