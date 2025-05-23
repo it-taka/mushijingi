@@ -1,0 +1,326 @@
+.game-board {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #2c3e50;
+  color: white;
+  font-family: 'Noto Sans JP', sans-serif;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.turn-info {
+  display: flex;
+  gap: 20px;
+}
+
+.turn-number, .phase-info {
+  font-weight: bold;
+}
+
+.active-player {
+  font-weight: bold;
+  color: #ffcc00;
+}
+
+.opponent-area, .player-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.opponent-area {
+  border-bottom: 2px dashed #666;
+}
+
+.center-area {
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.action-info {
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.attack-mode {
+  background-color: rgba(255, 0, 0, 0.2);
+  border: 2px solid rgba(255, 0, 0, 0.5);
+  border-radius: 5px;
+  padding: 15px;
+}
+
+/* 技選択用のスタイル */
+.technique-selection {
+  width: 100%;
+  max-width: 600px;
+  margin: 10px 0;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 215, 0, 0.5);
+}
+
+.technique-selection h4 {
+  margin: 0 0 15px 0;
+  color: #ffd700;
+  text-align: center;
+  font-size: 16px;
+}
+
+.technique-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.technique-btn {
+  padding: 12px 16px;
+  border: 2px solid #666;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  font-family: inherit;
+}
+
+.technique-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: #ffd700;
+  transform: translateY(-2px);
+}
+
+.technique-btn.selected {
+  background-color: rgba(255, 215, 0, 0.3);
+  border-color: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.technique-name {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #ffd700;
+}
+
+.technique-info {
+  font-size: 12px;
+  color: #ddd;
+}
+
+.technique-effect {
+  margin-top: 3px;
+  font-size: 11px;
+  color: #bbb;
+  font-style: italic;
+}
+
+.selected-technique {
+  font-size: 12px;
+  color: #ffd700;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.end-turn-btn, .direct-attack-btn, .cancel-btn, .toggle-details-btn, 
+.attack-btn, .change-technique-btn, .play-card-btn, .set-food-btn, .skip-set-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  margin: 2px;
+}
+
+.end-turn-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+.end-turn-btn:hover {
+  background-color: #2980b9;
+}
+
+.direct-attack-btn, .attack-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.direct-attack-btn:hover, .attack-btn:hover {
+  background-color: #c0392b;
+}
+
+.cancel-btn {
+  background-color: #7f8c8d;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #636e72;
+}
+
+.toggle-details-btn {
+  background-color: #9b59b6;
+  color: white;
+}
+
+.toggle-details-btn:hover {
+  background-color: #8e44ad;
+}
+
+.play-card-btn {
+  background-color: #27ae60;
+  color: white;
+}
+
+.play-card-btn:hover {
+  background-color: #229954;
+}
+
+.set-food-btn {
+  background-color: #f39c12;
+  color: white;
+}
+
+.set-food-btn:hover {
+  background-color: #e67e22;
+}
+
+.skip-set-btn {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.skip-set-btn:hover {
+  background-color: #7f8c8d;
+}
+
+.change-technique-btn {
+  background-color: #8e44ad;
+  color: white;
+}
+
+.change-technique-btn:hover {
+  background-color: #7d3c98;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 24px;
+  color: #ecf0f1;
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .game-board {
+    padding: 5px;
+  }
+  
+  .game-info {
+    flex-direction: column;
+    gap: 10px;
+    padding: 5px;
+  }
+  
+  .turn-info {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .active-player {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .center-area {
+    min-height: 80px;
+  }
+  
+  .action-info {
+    padding: 5px;
+  }
+  
+  .attack-mode {
+    padding: 10px;
+  }
+  
+  .technique-selection {
+    padding: 10px;
+    margin: 5px 0;
+  }
+  
+  .technique-selection h4 {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  
+  .technique-btn {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .technique-name {
+    font-size: 13px;
+  }
+  
+  .technique-info {
+    font-size: 11px;
+  }
+  
+  .technique-effect {
+    font-size: 10px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .end-turn-btn, .direct-attack-btn, .cancel-btn, .toggle-details-btn,
+  .attack-btn, .change-technique-btn, .play-card-btn, .set-food-btn, .skip-set-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+    min-width: 120px;
+  }
+}

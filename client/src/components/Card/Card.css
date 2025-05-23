@@ -1,0 +1,474 @@
+/* 拡大表示のスタイル */
+.card-expanded-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 9999 !important;
+  animation: fadeIn 0.2s ease-in-out;
+  /* すべてのポインターイベントを確実にキャッチ */
+  pointer-events: all !important;
+}
+
+.card-expanded-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  /* 中央配置を確実にする */
+  justify-content: center;
+  /* コンテナ自体も中央に配置 */
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+.card-expanded {
+  width: 360px; /* 通常の2倍のサイズ */
+  height: 500px;
+  cursor: default;
+  animation: scaleIn 0.3s ease-out;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  /* 中央配置を確実にする追加スタイル */
+  flex-shrink: 0;
+  position: relative;
+}
+
+.card-expanded:hover {
+  transform: none; /* 拡大表示時はホバー効果を無効化 */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); /* ホバー時もシャドウを維持 */
+}
+
+.card-expanded .card-image {
+  border-radius: 8px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-expanded-close-hint {
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  opacity: 0.8;
+  animation: pulse 2s infinite;
+  /* ヒントテキストも中央に */
+  flex-shrink: 0;
+  margin-top: 10px;
+}
+
+/* 拡大表示時の詳細レイアウト */
+.card-header-expanded {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.card-name-expanded {
+  font-weight: bold;
+  color: white;
+  font-size: 14px;
+  text-shadow: 1px 1px 2px black;
+}
+
+.card-image-expanded {
+  width: 100%;
+  height: 60%;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
+}
+
+.card-details-expanded {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+  font-size: 12px;
+}
+
+.card-type-attribute {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.card-cost-info {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #ff9900;
+}
+
+.card-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.card-hitpoints-expanded {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.card-rarity-expanded {
+  margin-top: 5px;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+/* HP バッジ（右上） */
+.card-hp-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 12px;
+  padding: 3px 7px;
+  font-size: 11px;
+  font-weight: bold;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  z-index: 3;
+  min-width: 28px;
+  text-align: center;
+}
+
+.damage-indicator {
+  color: #f44336;
+  font-weight: bold;
+  font-size: 9px;
+}
+
+.card-techniques {
+  margin: 5px 0;
+  font-size: 8px;
+  color: white;
+}
+
+.card-technique {
+  margin-bottom: 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 1px;
+}
+
+.technique-name {
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.technique-attack, .technique-effect {
+  font-size: 7px;
+  color: #ccc;
+}
+
+.card-flavor-text {
+  margin-top: 3px;
+  font-size: 7px;
+  font-style: italic;
+  color: #aaa;
+  text-align: center;
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .card-expanded-container {
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .card-expanded {
+    width: 280px;
+    height: 390px;
+    max-width: 90vw;
+    max-height: 70vh;
+  }
+  
+  .card-expanded-close-hint {
+    font-size: 14px;
+    margin-top: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-expanded {
+    width: 240px;
+    height: 335px;
+    max-width: 85vw;
+    max-height: 65vh;
+  }
+  
+  .card-expanded-close-hint {
+    font-size: 13px;
+  }
+
+  .card-hp-badge {
+    font-size: 9px;
+    padding: 2px 5px;
+    border-radius: 10px;
+    min-width: 22px;
+    top: 6px;
+    right: 6px;
+  }
+}
+
+/* 既存のカードスタイル（元のコードから必要な部分） */
+.card {
+  width: 180px;
+  height: 250px;
+  border-radius: 10px;
+  border: 2px solid #000;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: #f8f8f8;
+  cursor: pointer;
+  margin: 5px;
+  font-family: 'Noto Sans JP', sans-serif;
+  user-select: none;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.card-selected {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+  border: 3px solid #ffcc00;
+}
+
+.card-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.card-disabled:hover {
+  transform: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-attacked {
+  filter: grayscale(70%);
+}
+
+.card-damaged {
+  border-color: #f44336;
+  box-shadow: 0 0 10px rgba(244, 67, 54, 0.3);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.card-cost {
+  width: 25px;
+  height: 25px;
+  background-color: #ff9900;
+  color: black;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.card-name {
+  flex-grow: 1;
+  text-align: center;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: 1px 1px 2px black;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 5px;
+}
+
+.card-image-container {
+  height: 120px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e0e0e0;
+  margin-top: 35px; /* ヘッダーの分だけマージンを追加 */
+  position: relative; /* HPバッジのために追加 */
+}
+
+.card-info {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 10px;
+  gap: 5px;
+}
+
+.card-type, .card-attribute {
+  flex: 1;
+  text-align: center;
+  padding: 2px;
+}
+
+.card-attack, .card-hitpoints {
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 2px;
+  font-size: 10px;
+}
+
+.card-hitpoints {
+  position: relative;
+}
+
+.card-hitpoints-expanded {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* HP バッジ（右上） */
+.card-hp-badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 12px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  z-index: 2;
+  min-width: 24px;
+  text-align: center;
+}
+
+.damage-indicator {
+  color: #f44336;
+  font-weight: bold;
+  font-size: 9px;
+}
+
+.card-techniques {
+  flex-grow: 1;
+  padding: 5px;
+  font-size: 9px;
+  overflow-y: auto;
+  max-height: 60px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.card-technique {
+  margin-bottom: 3px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 2px;
+}
+
+.technique-name {
+  font-weight: bold;
+}
+
+.technique-attack, .technique-effect {
+  font-size: 8px;
+}
+
+.card-flavor-text {
+  padding: 3px;
+  font-size: 8px;
+  font-style: italic;
+  color: #666;
+  background-color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  max-height: 40px;
+  overflow-y: auto;
+}
+
+.card-footer {
+  padding: 3px;
+  display: flex;
+  justify-content: flex-end;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 9px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+/* レアリティによるスタイル */
+.card-rarity {
+  font-weight: bold;
+}
