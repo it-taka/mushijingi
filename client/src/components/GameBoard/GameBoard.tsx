@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGameContext } from '../../contexts/GameContext';
-import { Card as CardType, ActionType, FieldCard, GamePhase } from '../../types';
+import { Card as CardType, ActionType, FieldCard, GamePhase, CardAttribute } from '../../types';
 import { Card } from '../Card/Card';
 import { PlayerArea } from '../PlayerArea/PlayerArea';
 import './GameBoard.css';
@@ -40,6 +40,45 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
 
   // プレイヤーの視点を取得
   const { me, opponent } = getPlayerPerspective(gameState, playerId);
+
+  /**
+   * 属性による攻撃力補正を計算する
+   * 青→赤、赤→緑、緑→青の攻撃時に攻撃力が2倍になる
+   */
+  const calculateAttributeBonus = (attackerAttribute: CardAttribute, defenderAttribute: CardAttribute): number => {
+    const advantageousMatchups = {
+      [CardAttribute.BLUE]: CardAttribute.RED,   // 青は赤に有利
+      [CardAttribute.RED]: CardAttribute.GREEN,  // 赤は緑に有利
+      [CardAttribute.GREEN]: CardAttribute.BLUE  // 緑は青に有利
+    };
+
+    if (advantageousMatchups[attackerAttribute] === defenderAttribute) {
+      return 2.0;
+    }
+
+    return 1.0;
+  };
+
+  /**
+   * 攻撃力を計算（属性ボーナス込み）
+   */
+  const calculateFinalAttackPower = (attackerCard: FieldCard, defenderCard?: FieldCard, techniqueIndex: number = 0): { base: number; final: number; bonus: number } => {
+    if (!attackerCard.card.techniques || techniqueIndex >= attackerCard.card.techniques.length) {
+      return { base: 0, final: 0, bonus: 1.0 };
+    }
+
+    const baseAttack = attackerCard.card.techniques[techniqueIndex].attack || 0;
+    
+    if (!defenderCard) {
+      // 直接攻撃の場合は属性ボーナスなし
+      return { base: baseAttack, final: baseAttack, bonus: 1.0 };
+    }
+
+    const bonus = calculateAttributeBonus(attackerCard.card.attribute, defenderCard.card.attribute);
+    const finalAttack = Math.floor(baseAttack * bonus);
+
+    return { base: baseAttack, final: finalAttack, bonus };
+  };
 
   // 手札のカードをクリック時の処理
   const handleHandCardClick = (card: CardType) => {
@@ -267,19 +306,66 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
       <div className="technique-selection">
         <h4>使用する技を選択してください：</h4>
         <div className="technique-buttons">
-          {attackingCard.card.techniques.map((technique, index) => (
-            <button
-              key={index}
-              className={`technique-btn ${selectedTechniqueIndex === index ? 'selected' : ''}`}
-              onClick={() => handleTechniqueSelect(index)}
-            >
-              <div className="technique-name">{technique.name}</div>
-              <div className="technique-info">
-                {technique.attack && <span>攻撃力: {technique.attack}</span>}
-                {technique.effect && <div className="technique-effect">{technique.effect}</div>}
-              </div>
-            </button>
-          ))}
+          {attackingCard.card.techniques.map((technique, index) => {
+            // 選択されている攻撃対象がある場合、属性ボーナスを計算
+            let attackInfo = '';
+            if (selectedTarget && opponent) {
+              const targetFieldCard = opponent.field.find(fc => fc.card.id === selectedTarget.id);
+              if (targetFieldCard) {
+                const { base, final, bonus } = calculateFinalAttackPower(attackingCard, targetFieldCard, index);
+                if (bonus > 1.0) {
+                  attackInfo = ` → 最終威力: ${final} (${base} × ${bonus})`;
+                } else {
+                  attackInfo = ` → 威力: ${base}`;
+                }
+              }
+            }
+
+            return (
+              <button
+                key={index}
+                className={`technique-btn ${selectedTechniqueIndex === index ? 'selected' : ''}`}
+                onClick={() => handleTechniqueSelect(index)}
+              >
+                <div className="technique-name">{technique.name}</div>
+                <div className="technique-info">
+                  {technique.attack && <span>攻撃力: {technique.attack}{attackInfo}</span>}
+                  {technique.effect && <div className="technique-effect">{technique.effect}</div>}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  // 攻撃力計算結果を表示
+  const renderAttackPowerInfo = () => {
+    if (!attackingCard || !selectedTarget || !opponent) return null;
+
+    const targetFieldCard = opponent.field.find(fc => fc.card.id === selectedTarget.id);
+    if (!targetFieldCard) return null;
+
+    const { base, final, bonus } = calculateFinalAttackPower(attackingCard, targetFieldCard, selectedTechniqueIndex);
+    
+    if (bonus > 1.0) {
+      return (
+        <div className="attack-power-info">
+          <div className="attribute-bonus">
+            属性有利！ {attackingCard.card.attribute} → {targetFieldCard.card.attribute}
+          </div>
+          <div className="damage-calculation">
+            最終ダメージ: {final} = {base} × {bonus}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="attack-power-info">
+        <div className="damage-calculation">
+          ダメージ: {base}
         </div>
       </div>
     );
@@ -341,9 +427,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({ gameId }) => {
               <strong>攻撃モード</strong>
               <p>攻撃先を選んでください</p>
               {attackingCard && (
-                <p>攻撃カード: {attackingCard.card.name}</p>
+                <p>攻撃カード: {attackingCard.card.name} ({attackingCard.card.attribute}属性)</p>
               )}
             </div>
+            
+            {renderAttackPowerInfo()}
             
             {selectedTarget && (
               <button 

@@ -230,6 +230,30 @@ export class PlayerModel implements Player {
   }
 
   /**
+   * 縄張りから1枚カードを手札に移動する（虫カード破壊時に呼び出される）
+   * @returns 手札に加えられたカードまたはnull（縄張りが空の場合）
+   */
+  moveCardFromTerritoryToHand(): Card | null {
+    if (this.territory.length === 0) {
+      console.log(`縄張り破壊処理: ${this.username} の縄張りは空のため、カードを手札に加えない`);
+      return null;
+    }
+
+    // 縄張りから1枚取り出し
+    const card = this.territory.pop();
+    if (card) {
+      // 手札に加える
+      this.hand.push(card);
+      console.log(`縄張り破壊処理: ${this.username} の縄張りから「${card.name}」を手札に移動`);
+      console.log(`- 残り縄張り: ${this.territory.length}枚`);
+      console.log(`- 現在の手札: ${this.hand.length}枚`);
+      return card;
+    }
+
+    return null;
+  }
+
+  /**
    * ターン終了時の処理（旧メソッド - 互換性のため残す）
    */
   endTurn(): void {

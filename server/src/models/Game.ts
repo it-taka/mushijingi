@@ -6,7 +6,8 @@ import {
   Action, 
   ActionType, 
   Card,
-  ErrorType
+  ErrorType,
+  CardAttribute
 } from '../types';
 import { PlayerModel } from './Player';
 import { CardModel } from './Card';
@@ -81,10 +82,10 @@ export class Game {
   }
 
   /**
-   * 次のフェイズに進む
+   * 次のフェーズに進む
    */
   nextPhase(): void {
-    console.log(`フェイズ移行: ${this.phase} から`);
+    console.log(`フェーズ移行: ${this.phase} から`);
     
     switch (this.phase) {
       case GamePhase.DRAW:
@@ -124,7 +125,7 @@ export class Game {
         break;
     }
     
-    console.log(`フェイズ移行完了: ${this.phase}`);
+    console.log(`フェーズ移行完了: ${this.phase}`);
   }
 
   /**
@@ -199,6 +200,30 @@ export class Game {
   }
 
   /**
+   * 属性による攻撃力補正を計算する
+   * 青→赤、赤→緑、緑→青の攻撃時に攻撃力が2倍になる
+   * @param attackerAttribute 攻撃者の属性
+   * @param defenderAttribute 防御者の属性
+   * @returns 攻撃力倍率（1.0 = 通常、2.0 = 2倍）
+   */
+  private calculateAttributeBonus(attackerAttribute: CardAttribute, defenderAttribute: CardAttribute): number {
+    // 属性の相性チェック
+    const advantageousMatchups = {
+      [CardAttribute.BLUE]: CardAttribute.RED,   // 青は赤に有利
+      [CardAttribute.RED]: CardAttribute.GREEN,  // 赤は緑に有利
+      [CardAttribute.GREEN]: CardAttribute.BLUE  // 緑は青に有利
+    };
+
+    if (advantageousMatchups[attackerAttribute] === defenderAttribute) {
+      console.log(`属性有利: ${attackerAttribute} → ${defenderAttribute} (攻撃力2倍)`);
+      return 2.0;
+    }
+
+    console.log(`通常攻撃: ${attackerAttribute} → ${defenderAttribute} (攻撃力等倍)`);
+    return 1.0;
+  }
+
+  /**
    * 攻撃を処理
    */
   private handleAttack(action: Action, player: PlayerModel): { success: boolean; error?: ErrorType } {
@@ -223,19 +248,19 @@ export class Game {
     }
 
     console.log(`攻撃処理開始:`);
-    console.log(`- 攻撃者: ${attackerCard.card.name}`);
+    console.log(`- 攻撃者: ${attackerCard.card.name} (属性: ${attackerCard.card.attribute})`);
     console.log(`- 使用技: ${attackerCard.card.techniques[techniqueIndex].name}`);
     console.log(`- 技インデックス: ${techniqueIndex}`);
     console.log(`- 攻撃済みフラグ: ${attackerCard.hasAttacked}`);
 
     // 攻撃を実行
-    const attackPower = player.attack(attackerIndex, techniqueIndex);
-    if (attackPower <= 0) {
-      console.log(`- エラー: 攻撃力が0以下 (${attackPower})`);
+    const baseAttackPower = player.attack(attackerIndex, techniqueIndex);
+    if (baseAttackPower <= 0) {
+      console.log(`- エラー: 攻撃力が0以下 (${baseAttackPower})`);
       return { success: false, error: ErrorType.INVALID_ACTION };
     }
 
-    console.log(`- 攻撃力: ${attackPower}`);
+    console.log(`- 基本攻撃力: ${baseAttackPower}`);
 
     const opponent = this.getOpponentPlayer();
 
@@ -249,12 +274,30 @@ export class Game {
       }
 
       const defender = opponent.field[defenderIndex];
-      console.log(`- 防御者: ${defender.card.name}`);
+      console.log(`- 防御者: ${defender.card.name} (属性: ${defender.card.attribute})`);
       console.log(`- 防御者現在HP: ${(defender.card.hitpoints || 0) - defender.damage}/${defender.card.hitpoints}`);
 
+      // 属性による攻撃力補正を計算
+      const attributeBonus = this.calculateAttributeBonus(attackerCard.card.attribute, defender.card.attribute);
+      const finalAttackPower = Math.floor(baseAttackPower * attributeBonus);
+      
+      console.log(`- 属性補正倍率: ${attributeBonus}倍`);
+      console.log(`- 最終攻撃力: ${finalAttackPower} (${baseAttackPower} × ${attributeBonus})`);
+
       // ダメージを適用
-      const destroyed = opponent.receiveDamage(defenderIndex, attackPower);
+      const destroyed = opponent.receiveDamage(defenderIndex, finalAttackPower);
       console.log(`- 攻撃結果: ${destroyed ? '破壊' : '生存'}`);
+
+      // ★新機能: 虫カードが破壊された場合、相手の縄張りも1枚破壊
+      if (destroyed) {
+        console.log(`虫カード破壊による縄張り破壊処理開始`);
+        const territoryCard = opponent.moveCardFromTerritoryToHand();
+        if (territoryCard) {
+          console.log(`縄張り破壊成功: ${territoryCard.name} が ${opponent.username} の手札に移動`);
+        } else {
+          console.log(`縄張り破壊失敗: ${opponent.username} の縄張りは空`);
+        }
+      }
 
       this.lastAction = {
         ...action,
@@ -271,6 +314,7 @@ export class Game {
       }
 
       console.log(`- 相手本体への直接攻撃`);
+      console.log(`- 攻撃力: ${baseAttackPower} (直接攻撃では属性補正なし)`);
 
       // 縄張りがあるならダメージを適用
       if (opponent.territory.length > 0) {
