@@ -993,3 +993,304 @@
     background-color: rgba(0, 0, 0, 0.4);
   }
 }
+
+/* 保存ボタンのスタイル */
+.save-deck-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  background-color: #2ecc71;
+  color: white;
+}
+
+.save-deck-btn:hover:not(:disabled) {
+  background-color: #27ae60;
+  transform: translateY(-1px);
+}
+
+.save-deck-btn:disabled {
+  background-color: #7f8c8d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* デッキカウントの状態別スタイル */
+.deck-count.complete {
+  background-color: rgba(46, 204, 113, 0.3);
+  border-color: #2ecc71;
+  color: #2ecc71;
+}
+
+.deck-count.building {
+  background-color: rgba(52, 152, 219, 0.3);
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.deck-count.empty {
+  background-color: rgba(149, 165, 166, 0.3);
+  border-color: #95a5a6;
+  color: #95a5a6;
+}
+
+.complete-indicator {
+  color: #2ecc71;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+/* カードリストアイテムの改善 */
+.card-list-item .card-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  margin-bottom: 4px;
+}
+
+.card-cost {
+  background-color: rgba(243, 156, 18, 0.2);
+  color: #f39c12;
+  padding: 1px 4px;
+  border-radius: 2px;
+  font-weight: bold;
+}
+
+.card-rarity {
+  font-weight: bold;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+/* デッキカードアイテムの改善 */
+.deck-card-item .card-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  margin-bottom: 3px;
+}
+
+/* 空のメッセージスタイル */
+.no-cards-message, .empty-deck-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #95a5a6;
+  font-style: italic;
+}
+
+.no-cards-message p, .empty-deck-message p {
+  margin-bottom: 10px;
+}
+
+/* 完成ボタンの状態別スタイル */
+.complete-deck-btn.ready {
+  background-color: #2ecc71;
+  color: white;
+  animation: pulse-green 2s infinite;
+}
+
+.complete-deck-btn.ready:hover:not(:disabled) {
+  background-color: #27ae60;
+}
+
+@keyframes pulse-green {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(46, 204, 113, 0);
+  }
+}
+
+/* フィルター結果の表示 */
+.filter-results {
+  color: #bdc3c7;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 15px;
+}
+
+/* 統計の改善 */
+.basic-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+}
+
+.stat-value.complete {
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.stat-value.building {
+  color: #3498db;
+  font-weight: bold;
+}
+
+.stat-value.empty {
+  color: #95a5a6;
+}
+
+/* コストバーコンテナの改善 */
+.cost-bar-container {
+  flex: 1;
+  height: 12px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  margin: 0 8px;
+  overflow: hidden;
+}
+
+.cost-bar-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+/* 平均コストの表示 */
+.average-cost {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.average-cost .stat-value {
+  color: #f39c12;
+}
+
+/* フッターの改善 */
+.deck-builder-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-top: 1px solid #34495e;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 0 0 10px 10px;
+}
+
+.footer-info {
+  display: flex;
+  align-items: center;
+}
+
+.deck-status {
+  font-size: 14px;
+  font-weight: 600;
+  color: #bdc3c7;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 15px;
+}
+
+/* ボタンのツールチップスタイル */
+button[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 5px;
+}
+
+button[title]:hover::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.9);
+  z-index: 1000;
+}
+
+/* 保存中の状態 */
+.complete-deck-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* レスポンシブ対応の改善 */
+@media (max-width: 768px) {
+  .card-list-item .card-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .deck-card-item .card-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .basic-stats {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .cost-bar-container {
+    margin: 0 4px;
+  }
+
+  .deck-builder-footer {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .footer-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .no-cards-message, .empty-deck-message {
+    padding: 20px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-results {
+    display: block;
+    margin-left: 0;
+    margin-top: 5px;
+    text-align: center;
+  }
+
+  .cost-filter {
+    align-items: stretch;
+  }
+
+  .deck-status {
+    font-size: 12px;
+  }
+}
