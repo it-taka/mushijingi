@@ -118,20 +118,22 @@ const Home: React.FC = () => {
     setDeck(builtDeck);
     setView('home');
     
-    // ユーザー名が入力されていない場合は保存をスキップ
-    if (!username.trim()) {
-      alert('デッキを保存するにはユーザー名を入力してください');
-      return;
-    }
-    
-    // デッキ名を入力してもらって保存
-    const deckName = prompt('デッキ名を入力してください:');
-    if (deckName && deckName.trim()) {
-      const success = await saveDeck(deckName.trim(), builtDeck);
-      if (success) {
-        alert('デッキを保存しました！');
+    // ユーザー名が入力されている場合のみ保存を提案
+    if (username.trim()) {
+      // デッキ名を入力してもらって保存
+      const deckName = prompt('デッキ名を入力してください:');
+      if (deckName && deckName.trim()) {
+        const success = await saveDeck(deckName.trim(), builtDeck);
+        if (success) {
+          alert('デッキを保存しました！');
+        }
       }
     }
+  };
+
+  // ユーザー名変更ハンドラ
+  const handleUsernameChange = (newUsername: string) => {
+    setUsername(newUsername);
   };
 
   // サーバー接続ステータスが変わったらリセット
@@ -309,6 +311,8 @@ const Home: React.FC = () => {
         onDeckBuilt={handleDeckBuilt}
         onClose={() => setView('home')}
         initialDeck={deck}
+        username={username}
+        onUsernameChange={handleUsernameChange}
       />
     );
   }
