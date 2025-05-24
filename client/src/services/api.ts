@@ -101,7 +101,128 @@ export const deckApi = {
   }
 };
 
+/**
+ * ユーザーデッキ管理API
+ */
+export interface SavedDeck {
+  name: string;
+  cards: Card[];
+  lastModified: string;
+  createdAt: string;
+}
+
+export interface DeckMetadata {
+  name: string;
+  cardCount: number;
+  lastModified: string;
+  createdAt: string;
+}
+
+export const userDeckApi = {
+  // ユーザーのデッキ一覧を取得
+  getUserDecks: async (username: string): Promise<DeckMetadata[]> => {
+    if (!username || username.trim() === '') {
+      throw new Error('ユーザー名を指定してください');
+    }
+    
+    const response = await fetchApi(`/users/${encodeURIComponent(username)}/decks`);
+    return response.decks;
+  },
+
+  // 特定のデッキを取得
+  getDeck: async (username: string, deckName: string): Promise<SavedDeck> => {
+    if (!username || !deckName) {
+      throw new Error('ユーザー名とデッキ名を指定してください');
+    }
+    
+    const response = await fetchApi(
+      `/users/${encodeURIComponent(username)}/decks/${encodeURIComponent(deckName)}`
+    );
+    return response.deck;
+  },
+
+  // デッキを保存
+  saveDeck: async (username: string, deckName: string, cards: Card[]): Promise<SavedDeck> => {
+    if (!username || !deckName || !cards) {
+      throw new Error('ユーザー名、デッキ名、カードデータを指定してください');
+    }
+    
+    const response = await fetchApi(`/users/${encodeURIComponent(username)}/decks`, {
+      method: 'POST',
+      body: JSON.stringify({ deckName, cards }),
+    });
+    return response.deck;
+  },
+
+  // デッキを更新
+  updateDeck: async (username: string, deckName: string, cards: Card[]): Promise<SavedDeck> => {
+    if (!username || !deckName || !cards) {
+      throw new Error('ユーザー名、デッキ名、カードデータを指定してください');
+    }
+    
+    const response = await fetchApi(
+      `/users/${encodeURIComponent(username)}/decks/${encodeURIComponent(deckName)}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ cards }),
+      }
+    );
+    return response.deck;
+  },
+
+  // デッキを削除
+  deleteDeck: async (username: string, deckName: string): Promise<void> => {
+    if (!username || !deckName) {
+      throw new Error('ユーザー名とデッキ名を指定してください');
+    }
+    
+    await fetchApi(
+      `/users/${encodeURIComponent(username)}/decks/${encodeURIComponent(deckName)}`,
+      {
+        method: 'DELETE',
+      }
+    );
+  },
+
+  // デッキをリネーム
+  renameDeck: async (username: string, oldName: string, newName: string): Promise<SavedDeck> => {
+    if (!username || !oldName || !newName) {
+      throw new Error('ユーザー名、現在のデッキ名、新しいデッキ名を指定してください');
+    }
+    
+    const response = await fetchApi(
+      `/users/${encodeURIComponent(username)}/decks/${encodeURIComponent(oldName)}/rename`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ newName }),
+      }
+    );
+    return response.deck;
+  },
+
+  // ユーザーのデッキ数を取得
+  getUserDeckCount: async (username: string): Promise<number> => {
+    if (!username) {
+      throw new Error('ユーザー名を指定してください');
+    }
+    
+    const response = await fetchApi(`/users/${encodeURIComponent(username)}/decks/count`);
+    return response.count;
+  },
+
+  // デッキの存在確認
+  deckExists: async (username: string, deckName: string): Promise<boolean> => {
+    try {
+      await userDeckApi.getDeck(username, deckName);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+};
+
 export default {
   card: cardApi,
   deck: deckApi,
+  userDeck: userDeckApi,
 };
