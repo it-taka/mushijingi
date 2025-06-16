@@ -42,6 +42,19 @@ export class DeckService {
   }
 
   /**
+   * 安全なファイル名を生成する（日本語を含む名前をそのまま使用）
+   * Windowsで使用できない文字のみを置換
+   */
+  private sanitizeFileName(name: string): string {
+    // Windowsで使用できない文字を安全な文字に置換
+    return name
+      .replace(/[<>:"\/\\|?*]/g, '_') // Windows禁止文字を_に置換
+      .replace(/\.$/, '_')           // 末尾のピリオドを_に置換
+      .replace(/\s+/g, ' ')          // 連続する空白を単一空白に
+      .trim();                       // 前後の空白を削除
+  }
+
+  /**
    * ユーザーディレクトリのパスを取得
    */
   private getUserDirectory(username: string): string {
@@ -50,13 +63,11 @@ export class DeckService {
       throw new Error('ユーザー名が無効です');
     }
 
-    // ファイル名として安全な文字列に変換（全角文字対応）
     const trimmedUsername = username.trim();
-    // 全角文字をBase64エンコードで安全に変換
-    const safeUsername = Buffer.from(trimmedUsername, 'utf8').toString('base64').replace(/[/+=]/g, '_');
+    const safeUsername = this.sanitizeFileName(trimmedUsername);
     
-    // 長すぎる場合は短縮
-    const finalUsername = safeUsername.length > 50 ? safeUsername.substring(0, 50) : safeUsername;
+    // 長すぎる場合は短縮（ファイルシステムの制限を考慮）
+    const finalUsername = safeUsername.length > 100 ? safeUsername.substring(0, 100) : safeUsername;
     
     console.log(`ユーザーディレクトリパス生成: "${username}" -> "${finalUsername}"`);
     return path.join(this.baseDir, finalUsername);
@@ -72,11 +83,10 @@ export class DeckService {
     }
 
     const trimmedDeckName = deckName.trim();
-    // 全角文字をBase64エンコードで安全に変換
-    const safeDeckName = Buffer.from(trimmedDeckName, 'utf8').toString('base64').replace(/[/+=]/g, '_');
+    const safeDeckName = this.sanitizeFileName(trimmedDeckName);
     
     // 長すぎる場合は短縮
-    const finalDeckName = safeDeckName.length > 50 ? safeDeckName.substring(0, 50) : safeDeckName;
+    const finalDeckName = safeDeckName.length > 100 ? safeDeckName.substring(0, 100) : safeDeckName;
     
     const filePath = path.join(this.getUserDirectory(username), `${finalDeckName}.json`);
     console.log(`デッキファイルパス生成: "${deckName}" -> "${filePath}"`);
@@ -144,7 +154,7 @@ export class DeckService {
       }
 
       const savedDeck: SavedDeck = {
-        name: deckName.trim(),
+        name: deckName.trim(), // 元のデッキ名をそのまま保存
         cards: cards,
         lastModified: now,
         createdAt: createdAt
@@ -159,6 +169,7 @@ export class DeckService {
         await fs.mkdir(userDir, { recursive: true });
       }
 
+      // UTF-8でファイルを保存（日本語対応）
       await fs.writeFile(deckFilePath, JSON.stringify(savedDeck, null, 2), 'utf8');
       console.log(`デッキ保存完了: ${deckFilePath}`);
       
@@ -195,6 +206,7 @@ export class DeckService {
       const deckFilePath = this.getDeckFilePath(username, deckName);
       console.log(`デッキ読み込み開始: ${deckFilePath}`);
       
+      // UTF-8で読み込み（日本語対応）
       const data = await fs.readFile(deckFilePath, 'utf-8');
       const deck: SavedDeck = JSON.parse(data);
       
@@ -240,11 +252,12 @@ export class DeckService {
       for (const file of deckFiles) {
         try {
           const filePath = path.join(userDir, file);
+          // UTF-8で読み込み（日本語対応）
           const data = await fs.readFile(filePath, 'utf-8');
           const deck: SavedDeck = JSON.parse(data);
           
           decks.push({
-            name: deck.name,
+            name: deck.name, // 元のデッキ名を返す
             cardCount: deck.cards.length,
             lastModified: deck.lastModified,
             createdAt: deck.createdAt

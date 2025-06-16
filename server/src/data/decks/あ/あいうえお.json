@@ -1,85 +1,16 @@
 {
-  "name": "ランダム2",
+  "name": "あいうえお",
   "cards": [
     {
-      "id": "077",
-      "name": "ショウリョウバッタ",
+      "id": "041",
+      "name": "オオクワガタ",
       "type": "虫",
-      "attribute": "緑",
-      "cost": 4,
-      "hitpoints": 900,
-      "techniques": [
-        {
-          "name": "とびはねる",
-          "attack": 500,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "",
-          "attack": 0,
-          "effect": ""
-        }
-      ],
-      "rarity": "N",
-      "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_077.jpg"
-    },
-    {
-      "id": "105",
-      "name": "蜜蝋の壁",
-      "type": "虫",
-      "attribute": "",
-      "cost": 0,
-      "hitpoints": 0,
-      "techniques": [
-        {
-          "name": "",
-          "attack": 0,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "",
-          "attack": 0,
-          "effect": ""
-        }
-      ],
-      "rarity": "R",
-      "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_105.jpg"
-    },
-    {
-      "id": "070",
-      "name": "シロスジカミキリ",
-      "type": "虫",
-      "attribute": "緑",
+      "attribute": "青",
       "cost": 5,
       "hitpoints": 1300,
       "techniques": [
         {
-          "name": "くいちぎる",
-          "attack": 700,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "首を鳴らす",
-          "attack": 300,
-          "effect": "次の相手のターンの間、この虫の体力を３００増やす。"
-        }
-      ],
-      "rarity": "SR",
-      "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_070.jpg"
-    },
-    {
-      "id": "069",
-      "name": "ジャイアントウェタ",
-      "type": "虫",
-      "attribute": "緑",
-      "cost": 5,
-      "hitpoints": 1300,
-      "techniques": [
-        {
-          "name": "くらいつく",
+          "name": "オオアゴバサミ",
           "attack": 800,
           "effect": "追加効果なし"
         },
@@ -91,237 +22,7 @@
       ],
       "rarity": "SR",
       "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_069.jpg"
-    },
-    {
-      "id": "085",
-      "name": "アオクサカメムシ",
-      "type": "虫",
-      "attribute": "緑",
-      "cost": 2,
-      "hitpoints": 400,
-      "techniques": [
-        {
-          "name": "くいつく",
-          "attack": 200,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "＜毒霧噴射＞",
-          "attack": 0,
-          "effect": "これが虫の攻撃で破壊されたとき、これを破壊した虫を手札に戻す。"
-        }
-      ],
-      "rarity": "R",
-      "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_085.jpg"
-    },
-    {
-      "id": "075",
-      "name": "クワカミキリ",
-      "type": "虫",
-      "attribute": "緑",
-      "cost": 4,
-      "hitpoints": 800,
-      "techniques": [
-        {
-          "name": "くいちぎる",
-          "attack": 600,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "首を鳴らす",
-          "attack": 200,
-          "effect": "次の相手のターンの間、この虫の体力を２００増やす。"
-        }
-      ],
-      "rarity": "R",
-      "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_075.jpg"
-    },
-    {
-      "id": "089",
-      "name": "コガネムシ",
-      "type": "虫",
-      "attribute": "緑",
-      "cost": 2,
-      "hitpoints": 500,
-      "techniques": [
-        {
-          "name": "かじりつく",
-          "attack": 200,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "",
-          "attack": 0,
-          "effect": ""
-        }
-      ],
-      "rarity": "N",
-      "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_089.jpg"
-    },
-    {
-      "id": "067",
-      "name": "オオキバウスバカミキリ",
-      "type": "虫",
-      "attribute": "緑",
-      "cost": 6,
-      "hitpoints": 1700,
-      "techniques": [
-        {
-          "name": "神のキバ無双",
-          "attack": 1200,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "",
-          "attack": 0,
-          "effect": ""
-        }
-      ],
-      "rarity": "LR",
-      "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_067.jpg"
-    },
-    {
-      "id": "092",
-      "name": "チャバネアオカメムシ",
-      "type": "虫",
-      "attribute": "緑",
-      "cost": 1,
-      "hitpoints": 200,
-      "techniques": [
-        {
-          "name": "くいつく",
-          "attack": 100,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "＜毒霧噴射＞",
-          "attack": 0,
-          "effect": "これが虫の攻撃で破壊されたとき、これを破壊した虫を手札に戻す。"
-        }
-      ],
-      "rarity": "R",
-      "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_092.jpg"
-    },
-    {
-      "id": "107",
-      "name": "天牛の大顎",
-      "type": "虫",
-      "attribute": "",
-      "cost": 0,
-      "hitpoints": 0,
-      "techniques": [
-        {
-          "name": "",
-          "attack": 0,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "",
-          "attack": 0,
-          "effect": ""
-        }
-      ],
-      "rarity": "N",
-      "set": "スターターセット",
-      "image": "images/cards/card_107.jpg"
-    },
-    {
-      "id": "076",
-      "name": "キアゲハ（幼虫）",
-      "type": "虫",
-      "attribute": "緑",
-      "cost": 4,
-      "hitpoints": 900,
-      "techniques": [
-        {
-          "name": "かじる",
-          "attack": 400,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "くさいツノ",
-          "attack": 0,
-          "effect": "相手の虫を１つ選ぶ。次のターンその虫の攻撃力を６００下げる。"
-        }
-      ],
-      "rarity": "R",
-      "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_076.jpg"
-    },
-    {
-      "id": "126",
-      "name": "繚乱の足掻き",
-      "type": "虫",
-      "attribute": "",
-      "cost": 0,
-      "hitpoints": 0,
-      "techniques": [
-        {
-          "name": "",
-          "attack": 0,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "",
-          "attack": 0,
-          "effect": ""
-        }
-      ],
-      "rarity": "N",
-      "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_126.jpg"
-    },
-    {
-      "id": "071",
-      "name": "トノサマバッタ",
-      "type": "虫",
-      "attribute": "緑",
-      "cost": 5,
-      "hitpoints": 1200,
-      "techniques": [
-        {
-          "name": "くらいつく",
-          "attack": 700,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "",
-          "attack": 0,
-          "effect": ""
-        }
-      ],
-      "rarity": "R",
-      "set": "スターターセット",
-      "image": "images/cards/card_071.jpg"
-    },
-    {
-      "id": "074",
-      "name": "ゴマダラカミキリ",
-      "type": "虫",
-      "attribute": "緑",
-      "cost": 4,
-      "hitpoints": 700,
-      "techniques": [
-        {
-          "name": "くいちぎる",
-          "attack": 300,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "＜とびだす＞",
-          "attack": 0,
-          "effect": "これを縄張りから引いた時、自分の場に＜とびだす＞の技を持つ虫がいなければ、これを場に出してもよい。"
-        }
-      ],
-      "rarity": "R",
-      "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_074.jpg"
+      "image": "images/cards/card_041.jpg"
     },
     {
       "id": "122",
@@ -347,16 +48,39 @@
       "image": "images/cards/card_122.jpg"
     },
     {
-      "id": "109",
-      "name": "鳳蝶の蠱惑",
+      "id": "074",
+      "name": "ゴマダラカミキリ",
       "type": "虫",
-      "attribute": "",
-      "cost": 0,
-      "hitpoints": 0,
+      "attribute": "緑",
+      "cost": 4,
+      "hitpoints": 700,
       "techniques": [
         {
-          "name": "",
+          "name": "くいちぎる",
+          "attack": 300,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "＜とびだす＞",
           "attack": 0,
+          "effect": "これを縄張りから引いた時、自分の場に＜とびだす＞の技を持つ虫がいなければ、これを場に出してもよい。"
+        }
+      ],
+      "rarity": "R",
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_074.jpg"
+    },
+    {
+      "id": "077",
+      "name": "ショウリョウバッタ",
+      "type": "虫",
+      "attribute": "緑",
+      "cost": 4,
+      "hitpoints": 900,
+      "techniques": [
+        {
+          "name": "とびはねる",
+          "attack": 500,
           "effect": "追加効果なし"
         },
         {
@@ -367,65 +91,42 @@
       ],
       "rarity": "N",
       "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_109.jpg"
+      "image": "images/cards/card_077.jpg"
     },
     {
-      "id": "116",
-      "name": "瀬戸際の虫時雨",
+      "id": "087",
+      "name": "ゴマダラオトシブミ",
       "type": "虫",
-      "attribute": "",
-      "cost": 4,
-      "hitpoints": 0,
+      "attribute": "緑",
+      "cost": 2,
+      "hitpoints": 500,
       "techniques": [
         {
-          "name": "",
-          "attack": 0,
+          "name": "くいつく",
+          "attack": 200,
           "effect": "追加効果なし"
         },
         {
-          "name": "",
+          "name": "ゆりかご",
           "attack": 0,
-          "effect": ""
+          "effect": "次の相手のターンの間、この虫の体力を２００増やす。"
         }
       ],
-      "rarity": "LR",
+      "rarity": "N",
       "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_116.jpg"
+      "image": "images/cards/card_087.jpg"
     },
     {
-      "id": "038",
-      "name": "ギラファノコギリクワガタ",
+      "id": "058",
+      "name": "アカアシクワガタ",
       "type": "虫",
       "attribute": "青",
-      "cost": 5,
-      "hitpoints": 1200,
-      "techniques": [
-        {
-          "name": "オオアゴバサミ",
-          "attack": 900,
-          "effect": "追加効果なし"
-        },
-        {
-          "name": "",
-          "attack": 0,
-          "effect": ""
-        }
-      ],
-      "rarity": "SR",
-      "set": "ブースターパック（第一弾）",
-      "image": "images/cards/card_038.jpg"
-    },
-    {
-      "id": "030",
-      "name": "ナミテントウ",
-      "type": "虫",
-      "attribute": "赤",
-      "cost": 1,
+      "cost": 2,
       "hitpoints": 300,
       "techniques": [
         {
-          "name": "かみつぶす",
-          "attack": 100,
+          "name": "はさむ",
+          "attack": 300,
           "effect": "追加効果なし"
         },
         {
@@ -435,8 +136,8 @@
         }
       ],
       "rarity": "N",
-      "set": "スターターセット",
-      "image": "images/cards/card_030.jpg"
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_058.jpg"
     },
     {
       "id": "045",
@@ -460,8 +161,307 @@
       "rarity": "R",
       "set": "ブースターパック（第一弾）",
       "image": "images/cards/card_045.jpg"
+    },
+    {
+      "id": "051",
+      "name": "ヤエヤママルバネクワガタ",
+      "type": "虫",
+      "attribute": "青",
+      "cost": 3,
+      "hitpoints": 500,
+      "techniques": [
+        {
+          "name": "はさむ",
+          "attack": 400,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "",
+          "attack": 0,
+          "effect": ""
+        }
+      ],
+      "rarity": "N",
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_051.jpg"
+    },
+    {
+      "id": "060",
+      "name": "ニホンミツバチ",
+      "type": "虫",
+      "attribute": "青",
+      "cost": 1,
+      "hitpoints": 400,
+      "techniques": [
+        {
+          "name": "ハチダマアタック",
+          "attack": 100,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "決死の一撃",
+          "attack": 200,
+          "effect": "この技を使うとき、これを破壊する。この技で攻撃を与えたとき、これを破壊する。2023/03/14 カードの効果処理、裁定整備により変更"
+        }
+      ],
+      "rarity": "R",
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_060.jpg"
+    },
+    {
+      "id": "092",
+      "name": "チャバネアオカメムシ",
+      "type": "虫",
+      "attribute": "緑",
+      "cost": 1,
+      "hitpoints": 200,
+      "techniques": [
+        {
+          "name": "くいつく",
+          "attack": 100,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "＜毒霧噴射＞",
+          "attack": 0,
+          "effect": "これが虫の攻撃で破壊されたとき、これを破壊した虫を手札に戻す。"
+        }
+      ],
+      "rarity": "R",
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_092.jpg"
+    },
+    {
+      "id": "076",
+      "name": "キアゲハ（幼虫）",
+      "type": "虫",
+      "attribute": "緑",
+      "cost": 4,
+      "hitpoints": 900,
+      "techniques": [
+        {
+          "name": "かじる",
+          "attack": 400,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "くさいツノ",
+          "attack": 0,
+          "effect": "相手の虫を１つ選ぶ。次のターンその虫の攻撃力を６００下げる。"
+        }
+      ],
+      "rarity": "R",
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_076.jpg"
+    },
+    {
+      "id": "084",
+      "name": "コバネイナゴ",
+      "type": "虫",
+      "attribute": "緑",
+      "cost": 2,
+      "hitpoints": 400,
+      "techniques": [
+        {
+          "name": "はねる",
+          "attack": 200,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "イナゴの大群",
+          "attack": 400,
+          "effect": "この技を使うとき、自分のエサを１つ選び破壊する。"
+        }
+      ],
+      "rarity": "R",
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_084.jpg"
+    },
+    {
+      "id": "100",
+      "name": "雀蜂の毒針",
+      "type": "虫",
+      "attribute": "",
+      "cost": 1,
+      "hitpoints": 0,
+      "techniques": [
+        {
+          "name": "",
+          "attack": 0,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "",
+          "attack": 0,
+          "effect": ""
+        }
+      ],
+      "rarity": "R",
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_100.jpg"
+    },
+    {
+      "id": "083",
+      "name": "イボバッタ",
+      "type": "虫",
+      "attribute": "緑",
+      "cost": 3,
+      "hitpoints": 400,
+      "techniques": [
+        {
+          "name": "はねる",
+          "attack": 300,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "＜とびだす＞",
+          "attack": 0,
+          "effect": "これを縄張りから引いた時、自分の場に＜とびだす＞の技を持つ虫がいなければ、これを場に出してもよい。"
+        }
+      ],
+      "rarity": "N",
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_083.jpg"
+    },
+    {
+      "id": "101",
+      "name": "玉虫色の羽化",
+      "type": "虫",
+      "attribute": "",
+      "cost": 2,
+      "hitpoints": 0,
+      "techniques": [
+        {
+          "name": "",
+          "attack": 0,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "",
+          "attack": 0,
+          "effect": ""
+        }
+      ],
+      "rarity": "R",
+      "set": "スターターセット",
+      "image": "images/cards/card_101.jpg"
+    },
+    {
+      "id": "050",
+      "name": "オオスカシバ",
+      "type": "虫",
+      "attribute": "青",
+      "cost": 3,
+      "hitpoints": 400,
+      "techniques": [
+        {
+          "name": "すいつくす",
+          "attack": 500,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "",
+          "attack": 0,
+          "effect": ""
+        }
+      ],
+      "rarity": "N",
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_050.jpg"
+    },
+    {
+      "id": "110",
+      "name": "不滅の王台",
+      "type": "虫",
+      "attribute": "",
+      "cost": 0,
+      "hitpoints": 0,
+      "techniques": [
+        {
+          "name": "",
+          "attack": 0,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "",
+          "attack": 0,
+          "effect": ""
+        }
+      ],
+      "rarity": "N",
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_110.jpg"
+    },
+    {
+      "id": "082",
+      "name": "オオムラサキ（幼虫）",
+      "type": "虫",
+      "attribute": "緑",
+      "cost": 3,
+      "hitpoints": 700,
+      "techniques": [
+        {
+          "name": "かじる",
+          "attack": 300,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "",
+          "attack": 0,
+          "effect": ""
+        }
+      ],
+      "rarity": "N",
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_082.jpg"
+    },
+    {
+      "id": "026",
+      "name": "ハンミョウ",
+      "type": "虫",
+      "attribute": "赤",
+      "cost": 2,
+      "hitpoints": 400,
+      "techniques": [
+        {
+          "name": "かむ",
+          "attack": 300,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "",
+          "attack": 0,
+          "effect": ""
+        }
+      ],
+      "rarity": "N",
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_026.jpg"
+    },
+    {
+      "id": "094",
+      "name": "カイコ（幼虫）",
+      "type": "虫",
+      "attribute": "緑",
+      "cost": 1,
+      "hitpoints": 400,
+      "techniques": [
+        {
+          "name": "かじる",
+          "attack": 100,
+          "effect": "追加効果なし"
+        },
+        {
+          "name": "",
+          "attack": 0,
+          "effect": ""
+        }
+      ],
+      "rarity": "N",
+      "set": "ブースターパック（第一弾）",
+      "image": "images/cards/card_094.jpg"
     }
   ],
-  "lastModified": "2025-05-24T09:31:14.785Z",
-  "createdAt": "2025-05-24T09:31:14.785Z"
+  "lastModified": "2025-06-16T00:50:18.678Z",
+  "createdAt": "2025-06-16T00:50:18.678Z"
 }

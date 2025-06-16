@@ -27,12 +27,22 @@ const Home: React.FC = () => {
   const [loadingMessage, setLoadingMessage] = useState<string>('');
   const [savedDecks, setSavedDecks] = useState<DeckMetadata[]>([]);
   const [selectedDeckName, setSelectedDeckName] = useState<string>('');
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   const playerId = gameState?.players.find(p => p.username === username)?.id || '';
 
+  // ログイン状態をローカルストレージから復元
+  useEffect(() => {
+    const savedUsername = localStorage.getItem('insectDivinity_username');
+    if (savedUsername) {
+      setUsername(savedUsername);
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   // 保存されたデッキを読み込み（サーバーから）
   const loadSavedDecks = useCallback(async () => {
-    if (username.trim()) {
+    if (username.trim() && isLoggedIn) {
       try {
         console.log(`保存されたデッキを読み込み中: ${username}`);
         const decks = await userDeckApi.getUserDecks(username);
@@ -43,17 +53,55 @@ const Home: React.FC = () => {
         setSavedDecks([]);
       }
     }
-  }, [username]);
+  }, [username, isLoggedIn]);
 
   useEffect(() => {
     loadSavedDecks();
   }, [loadSavedDecks]);
 
+  // ログイン処理
+  const handleLogin = async () => {
+    if (!username.trim()) {
+      alert('ユーザー名を入力してください');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setLoadingMessage('ログイン中...');
+      
+      // ユーザー名をローカルストレージに保存
+      localStorage.setItem('insectDivinity_username', username.trim());
+      setIsLoggedIn(true);
+      
+      // 保存されたデッキを読み込み
+      await loadSavedDecks();
+      
+      setIsLoading(false);
+      console.log(`ログイン完了: ${username}`);
+    } catch (err) {
+      console.error('ログインエラー:', err);
+      setIsLoading(false);
+      alert('ログインに失敗しました');
+    }
+  };
+
+  // ログアウト処理
+  const handleLogout = () => {
+    localStorage.removeItem('insectDivinity_username');
+    setIsLoggedIn(false);
+    setUsername('');
+    setSavedDecks([]);
+    setDeck([]);
+    setSelectedDeckName('');
+    console.log('ログアウト完了');
+  };
+
   // デッキを保存（サーバーに）
   const saveDeck = async (deckName: string, cards: Card[]) => {
     // 入力検証
     if (!username.trim()) {
-      alert('ユーザー名を入力してください');
+      alert('ログインしてください');
       return false;
     }
 
@@ -115,7 +163,7 @@ const Home: React.FC = () => {
   const loadDeck = async (deckName: string) => {
     // 入力検証
     if (!username.trim()) {
-      alert('ユーザー名が設定されていません');
+      alert('ログインしてください');
       return;
     }
 
@@ -147,8 +195,8 @@ const Home: React.FC = () => {
     console.log(`デッキ完成: ${builtDeck.length}枚`);
     setDeck(builtDeck);
     
-    // ユーザー名が入力されている場合は保存を提案
-    if (username.trim()) {
+    // ログインしている場合は保存を提案
+    if (isLoggedIn && username.trim()) {
       const shouldSave = window.confirm('デッキを保存しますか？');
       if (shouldSave) {
         const deckName = prompt('デッキ名を入力してください:');
@@ -166,7 +214,7 @@ const Home: React.FC = () => {
         setSelectedDeckName('');
       }
     } else {
-      // ユーザー名がない場合は選択状態をクリア
+      // ログインしていない場合は選択状態をクリア
       setSelectedDeckName('');
     }
     
@@ -177,10 +225,6 @@ const Home: React.FC = () => {
   const handleUsernameChange = (newUsername: string) => {
     console.log(`ユーザー名変更: ${username} -> ${newUsername}`);
     setUsername(newUsername);
-    // ユーザー名が変わったらデッキリストをクリア
-    setSavedDecks([]);
-    setDeck([]);
-    setSelectedDeckName('');
   };
 
   // サーバー接続ステータスが変わったらリセット
@@ -217,8 +261,8 @@ const Home: React.FC = () => {
 
   // ゲーム作成処理
   const handleCreateGame = async () => {
-    if (!username.trim()) {
-      alert('ユーザー名を入力してください');
+    if (!isLoggedIn || !username.trim()) {
+      alert('ログインしてください');
       return;
     }
 
@@ -247,8 +291,8 @@ const Home: React.FC = () => {
 
   // ゲーム参加処理
   const handleJoinGame = async () => {
-    if (!username.trim()) {
-      alert('ユーザー名を入力してください');
+    if (!isLoggedIn || !username.trim()) {
+      alert('ログインしてください');
       return;
     }
 
@@ -298,6 +342,51 @@ const Home: React.FC = () => {
     }
   };
 
+  // ログイン画面のレンダリング
+  const renderLoginSection = () => (
+    <div className="login-container">
+      <h3>ログイン</h3>
+      {!isLoggedIn ? (
+        <div className="login-form">
+          <p>デッキの保存・管理にはログインが必要です</p>
+          <div className="form-group">
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="ユーザー名を入力..."
+              className="username-input"
+              onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+            />
+          </div>
+          <button 
+            className="login-btn"
+            onClick={handleLogin}
+            disabled={!username.trim()}
+          >
+            ログイン
+          </button>
+          <div className="login-note">
+            <p>※初回ログイン時に新しいアカウントが作成されます</p>
+          </div>
+        </div>
+      ) : (
+        <div className="logged-in-info">
+          <p>ログイン中: <strong>{username}</strong></p>
+          <div className="user-stats">
+            <span className="deck-count-stat">保存済みデッキ: {savedDecks.length}個</span>
+          </div>
+          <button 
+            className="logout-btn"
+            onClick={handleLogout}
+          >
+            ログアウト
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
   // デッキ選択UI（共通コンポーネント）
   const renderDeckSelection = () => (
     <div className="deck-selection-section">
@@ -333,7 +422,7 @@ const Home: React.FC = () => {
         </div>
       )}
 
-      {savedDecks.length > 0 && (
+      {isLoggedIn && savedDecks.length > 0 && (
         <div className="saved-decks-section">
           <h4>保存されたデッキ ({savedDecks.length}個)</h4>
           <div className="saved-decks-list">
@@ -481,22 +570,13 @@ const Home: React.FC = () => {
     return (
       <div className="form-container">
         <h2>新しいゲームを作成</h2>
-        <div className="form-group">
-          <label>ユーザー名:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="ユーザー名を入力"
-          />
-        </div>
         
         {renderDeckSelection()}
 
         <div className="form-actions">
           <button 
             onClick={handleCreateGame}
-            disabled={!isConnected || deck.length !== 20}
+            disabled={!isConnected || !isLoggedIn || deck.length !== 20}
           >
             ゲームを作成 {deck.length > 0 && `(${deck.length}/20枚)`}
           </button>
@@ -512,15 +592,6 @@ const Home: React.FC = () => {
       <div className="form-container">
         <h2>ゲームに参加</h2>
         <div className="form-group">
-          <label>ユーザー名:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="ユーザー名を入力"
-          />
-        </div>
-        <div className="form-group">
           <label>ゲームID:</label>
           <input
             type="text"
@@ -535,7 +606,7 @@ const Home: React.FC = () => {
         <div className="form-actions">
           <button 
             onClick={handleJoinGame}
-            disabled={!isConnected || deck.length !== 20}
+            disabled={!isConnected || !isLoggedIn || deck.length !== 20}
           >
             ゲームに参加 {deck.length > 0 && `(${deck.length}/20枚)`}
           </button>
@@ -560,106 +631,45 @@ const Home: React.FC = () => {
         )}
       </div>
 
-      {/* デッキ状態表示 */}
-      <div className="deck-status-container">
-        <h3>現在のデッキ</h3>
-        {deck.length > 0 ? (
-          <div className="current-deck-info">
-            <p>選択中: {deck.length}/20枚のデッキ</p>
-            {selectedDeckName && (
-              <p>デッキ名: {selectedDeckName}</p>
-            )}
-            {!selectedDeckName && deck.length === 20 && (
-              <p>種類: ランダムデッキ</p>
-            )}
-            <div className="deck-options">
-              <button 
-                className="manage-deck-btn"
-                onClick={() => setView('deck_builder')}
-              >
-                デッキを編集
-              </button>
-              {deck.length === 20 && username.trim() && !selectedDeckName && (
-                <button 
-                  className="save-deck-btn"
-                  onClick={async () => {
-                    const deckName = prompt('現在のデッキを保存しますか？デッキ名を入力してください:');
-                    if (deckName && deckName.trim()) {
-                      const success = await saveDeck(deckName.trim(), deck);
-                      if (success) {
-                        alert('デッキを保存しました！');
-                      }
-                    }
-                  }}
-                >
-                  デッキを保存
-                </button>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="no-deck-info">
-            <p>デッキが選択されていません</p>
-            <div className="deck-options">
-              <button 
-                className="build-deck-btn"
-                onClick={() => setView('deck_builder')}
-              >
-                デッキを組む
-              </button>
-              <button 
-                className="random-deck-btn"
-                onClick={useRandomDeck}
-              >
-                ランダムデッキを使用
-              </button>
-            </div>
-          </div>
-        )}
+      {/* ログインセクション */}
+      {renderLoginSection()}
 
-        {/* 保存されたデッキがある場合はホーム画面でも表示 */}
-        {savedDecks.length > 0 && deck.length === 0 && (
-          <div className="saved-decks-section">
-            <h4>保存されたデッキ ({savedDecks.length}個)</h4>
-            <div className="saved-decks-list">
-              {savedDecks.slice(0, 3).map((savedDeck, index) => (
-                <div key={index} className="saved-deck-item">
-                  <div className="deck-info">
-                    <div className="deck-name">{savedDeck.name}</div>
-                    <div className="deck-meta">
-                      {savedDeck.cardCount}枚 | {new Date(savedDeck.lastModified).toLocaleDateString()}
-                    </div>
-                  </div>
-                  <div className="deck-actions">
-                    <button 
-                      className="use-deck-btn"
-                      onClick={() => loadDeck(savedDeck.name)}
-                    >
-                      使用
-                    </button>
-                  </div>
-                </div>
-              ))}
-              {savedDecks.length > 3 && (
-                <p style={{ textAlign: 'center', color: '#95a5a6', fontSize: '0.9rem' }}>
-                  他 {savedDecks.length - 3}個のデッキ
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+      {/* 現在のデッキ情報（ログイン時のみ表示、簡素化） */}
+      {isLoggedIn && deck.length > 0 && (
+        <div className="current-deck-summary">
+          <h3>現在のデッキ</h3>
+          <p>
+            {selectedDeckName ? `${selectedDeckName} (${deck.length}/20枚)` : `ランダムデッキ (${deck.length}/20枚)`}
+          </p>
+          {deck.length === 20 && isLoggedIn && !selectedDeckName && (
+            <button 
+              className="save-deck-btn"
+              onClick={async () => {
+                const deckName = prompt('現在のデッキを保存しますか？デッキ名を入力してください:');
+                if (deckName && deckName.trim()) {
+                  const success = await saveDeck(deckName.trim(), deck);
+                  if (success) {
+                    alert('デッキを保存しました！');
+                  }
+                }
+              }}
+            >
+              デッキを保存
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="menu-buttons">
         <button 
           onClick={() => setView('create')}
-          disabled={!isConnected}
+          disabled={!isConnected || !isLoggedIn}
         >
           新しいゲームを作成
         </button>
         <button 
           onClick={() => setView('join')}
-          disabled={!isConnected}
+          disabled={!isConnected || !isLoggedIn}
         >
           ゲームに参加
         </button>
@@ -668,7 +678,45 @@ const Home: React.FC = () => {
         >
           デッキビルダー
         </button>
+        {!isLoggedIn && deck.length === 0 && (
+          <button 
+            onClick={useRandomDeck}
+            className="random-deck-standalone-btn"
+          >
+            ランダムデッキで練習
+          </button>
+        )}
       </div>
+
+      {/* 保存されたデッキがある場合はホーム画面でも表示（簡素化） */}
+      {isLoggedIn && savedDecks.length > 0 && deck.length === 0 && (
+        <div className="quick-deck-selection">
+          <h3>最近のデッキ</h3>
+          <div className="quick-deck-list">
+            {savedDecks.slice(0, 3).map((savedDeck, index) => (
+              <div key={index} className="quick-deck-item">
+                <div className="deck-info">
+                  <div className="deck-name">{savedDeck.name}</div>
+                  <div className="deck-meta">
+                    {savedDeck.cardCount}枚
+                  </div>
+                </div>
+                <button 
+                  className="use-deck-btn"
+                  onClick={() => loadDeck(savedDeck.name)}
+                >
+                  使用
+                </button>
+              </div>
+            ))}
+            {savedDecks.length > 3 && (
+              <p className="more-decks-note">
+                他 {savedDecks.length - 3}個のデッキ - デッキビルダーで管理
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="game-info-box">
         <h3>ゲーム概要</h3>
